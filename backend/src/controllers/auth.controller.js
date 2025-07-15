@@ -14,7 +14,7 @@ export const signUp = async (req, res) => {
     if (password.length < 6) {
       return res
         .status(400)
-        .json({ message: "password must be at least 6 characters" });
+        .json({ message: "password must be at least 6 characters🙂" });
     }
 
     //encrypt password using decryptjs
@@ -29,7 +29,7 @@ export const signUp = async (req, res) => {
 
     const existingUser = await userModel.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(400).json({ message: "User already exists 🤦" });
     }
 
     //create a new user

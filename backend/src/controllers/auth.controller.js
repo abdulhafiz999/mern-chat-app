@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import userModel from '../models/user.model.js';
 import generateJWT from '../lib/generateJWT.js';
 
+
 export const signUp = async (req, res) => {
   const { username, email, password, avatar } = req.body;
 
@@ -99,7 +100,7 @@ export const signIn = async (req, res) => {
     await user.save();
 
     // 5️⃣ Generate token
-    const token = generateJWT(user._id);
+    const token = generateJWT(user._id, res);
 
     // 6️⃣ Send response
     res.status(200).json({
@@ -121,3 +122,37 @@ export const signIn = async (req, res) => {
     });
   }
 };
+
+export const signOut = async (req, res) => {
+  try {
+    // Update user's online status to false
+    await userModel.findByIdAndUpdate(req.user._id, {
+      isOnline: false,
+    });
+
+    // Clear the JWT cookie
+    res.cookie("jwt", "", {
+      maxAge: 0, // Expire the cookie immediately
+      httpOnly: true,
+      sameSite: "strict", // Ensure the cookie is sent only in same-site requests
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    console.error("Logout error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error during logout",
+      error: error.message,
+    });
+  }
+};
+
+
+//implement updateUserInfo function to update user information like username, email, avatar, etc.
+
+//add a user location which will include an location, relationShip, city, country, date of birth

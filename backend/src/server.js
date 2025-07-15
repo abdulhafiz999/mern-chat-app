@@ -6,6 +6,7 @@ import authRouter from './routes/auth.route.js';
 
 
 dotenv.config();
+console.log(process.env.JWT_SECRET);
 
 const app = express();
 

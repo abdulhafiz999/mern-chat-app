@@ -32,6 +32,15 @@ const userSchema = new mongoose.Schema(
       type: Boolean, // true or false
       default: false, // New users start offline
     },
+    location: String,
+    relationship: String,
+    city: String,
+    country: String,
+    dateOfBirth: Date,
+    Bio: {
+      type: String,
+      maxlength: 500, // At most 500 characters
+    },
   },
   {
     timestamps: true, // Automatically adds createdAt and updatedAt

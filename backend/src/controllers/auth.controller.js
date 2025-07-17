@@ -1,10 +1,11 @@
 import bcrypt from 'bcryptjs';
 import userModel from '../models/user.model.js';
 import generateJWT from '../lib/generateJWT.js';
+import auth  from '../middleware/auth.middleware.js'; // Ensure auth middleware is imported
 
 
 export const signUp = async (req, res) => {
-  const { username, email, password, avatar } = req.body;
+  const { username, email, password, avatar, city, relationship, country } = req.body;
 
   try {
     // validate data
@@ -55,6 +56,11 @@ export const signUp = async (req, res) => {
         userName: newUser.userName,
         email: newUser.email,
         avatar: newUser.avatar,
+        relationship: newUser.relationship,
+        city: newUser.city,
+        country: newUser.country,
+        
+
       }
     });
 
@@ -112,6 +118,8 @@ export const signIn = async (req, res) => {
         email: user.email,
         avatar: user.avatar,
         isOnline: user.isOnline,
+        relationship: user.relationship,
+        city: user.city,
       },
     });
   } catch (error) {
@@ -125,6 +133,14 @@ export const signIn = async (req, res) => {
 
 export const signOut = async (req, res) => {
   try {
+    // ✅ Safety check
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized: No user in request",
+      });
+    }
+
     // Update user's online status to false
     await userModel.findByIdAndUpdate(req.user._id, {
       isOnline: false,
@@ -150,6 +166,93 @@ export const signOut = async (req, res) => {
       error: error.message,
     });
   }
+};
+
+ 
+export const getUserProfile = async (req, res) => {
+  try {
+    // req.user is set by the auth middleware
+    res.status(200).json({
+      success: true,
+      user: {
+        id: req.user._id,
+        username: req.user.username,
+        email: req.user.email,
+        avatar: req.user.avatar,
+        isOnline: req.user.isOnline,
+        createdAt: req.user.createdAt,
+        city: req.user.city,
+        relationship: req.user.relationship,
+        country: req.user.country
+      },
+    });
+  } catch (error) {
+    console.error("Get user error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error getting user information",
+      error: error.message,
+    });
+  }
+};
+
+
+// Update User Profile
+export const updateProfile = async (req, res) => {
+  const { username, email, avatar, city, relationship, country, dateOfBirth } = req.body;
+
+  try {
+    const updateData = {};
+    if (username) updateData.username = username;
+    if (email) updateData.email = email;
+    if (avatar) updateData.avatar = avatar;
+    if (city) updateData.city = city;
+    if (relationship) updateData.relationship = relationship;
+    if (country) updateData.country = country;
+    if (dateOfBirth) updateData.dateOfBirth = dateOfBirth;
+
+    const existingUser = await userModel.findOne({
+      _id: { $ne: req.user._id },
+      $or: [
+        username ? { username } : {},
+        email ? { email } : {}
+      ].filter(Boolean)
+    });
+
+    if (existingUser) {
+      return res.status(400).json({ message: 'Username or email already in use' });
+    }
+
+    const updatedUser = await userModel.findByIdAndUpdate(
+      req.user._id,
+      updateData,
+      {
+        new: true,
+        runValidators: true
+      }
+    ).select('-password');
+
+    res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      user: updatedUser
+    });
+  } catch (error) {
+    console.error('Update profile error:', error);
+
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation error',
+        errors: Object.values(error.errors).map(err => err.message)
+      });
+    }
+
+    if (error.code === 11000) {
+      return res.status(400).json({ message: 'Username or email already exists' });
+    }
+    res.status(500).json({ message: 'Profile update failed', error: error.message });
+    }
 };
 
 

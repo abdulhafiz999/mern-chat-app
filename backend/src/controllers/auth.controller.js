@@ -256,6 +256,15 @@ export const updateProfile = async (req, res) => {
 };
 
 
+export const checkAuth = async (req, res) => {
+
+  try{
+    res.req.user
+  }catch(error){
+    console.log(error)
+  }
+}
+
 //implement updateUserInfo function to update user information like username, email, avatar, etc.
 
 //add a user location which will include an location, relationShip, city, country, date of birth

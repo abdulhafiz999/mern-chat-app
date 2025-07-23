@@ -7,10 +7,12 @@ import auth from '../middleware/auth.middleware.js'; // Ensure auth middleware i
 
 const messageRouter = express.Router();
 
-
+// Static routes
 messageRouter.post('/send', auth, sendMessage); // Route to send a new message
 messageRouter.get("/getConversations", auth, getConversations); 
 
+
+// Dynamic routes
 messageRouter.get("/:userId", auth, getMessages);                  // Get messages with specific user
 messageRouter.delete("/:messageId", auth, deleteMessage);        // Delete a message
 messageRouter.get("/details/:messageId", auth, getMessageDetails) // Get message Details

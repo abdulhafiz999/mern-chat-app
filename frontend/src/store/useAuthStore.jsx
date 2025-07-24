@@ -19,7 +19,7 @@ export const useAuthStore = create((set) => ({
   // Actions
   checkAuth: async () => {
     try {
-      const res = await api.get("/auth/check");
+      const res = await api.get("/auth/check-auth");
       set({ authUser: res.data });
     } catch (error) {
       console.log("Error in checkAuth:", error);
@@ -32,7 +32,7 @@ export const useAuthStore = create((set) => ({
   signup: async (data) => {
     set({ isSigningUp: true });
     try {
-      const res = await api.post("/auth/signup", data);
+      const res = await api.post("/auth/signUp", data);
       set({ authUser: res.data });
       toast.success("Account created successfully");
     } catch (error) {
@@ -45,7 +45,7 @@ export const useAuthStore = create((set) => ({
   login: async (data) => {
     set({ isLoggingIn: true });
     try {
-      const res = await api.post("/auth/login", data);
+      const res = await api.post("/auth/signIn", data);
       set({ authUser: res.data });
       toast.success("Logged in successfully");
     } catch (error) {
@@ -57,7 +57,7 @@ export const useAuthStore = create((set) => ({
 
   logout: async () => {
     try {
-      await api.post("/auth/logout");
+      await api.post("/auth/logOut");
       set({ authUser: null });
       toast.success("Logged out successfully");
     } catch (error) {
@@ -68,7 +68,7 @@ export const useAuthStore = create((set) => ({
   updateProfile: async (data) => {
     set({ isUpdatingProfile: true });
     try {
-      const res = await api.put("/auth/update-profile", data);
+      const res = await api.put("/auth/updateProfile", data);
       set({ authUser: res.data });
       toast.success("Profile updated successfully");
     } catch (error) {

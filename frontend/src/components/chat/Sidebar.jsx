@@ -30,7 +30,7 @@ const Sidebar = () => {
     <aside className="h-full w-20 lg:w-80 border-r border-gray-200 flex flex-col transition-all duration-200">
       {/* Header */}
       <div className="flex-shrink-0  border-b border-gray-200 p-5">
-        <div className="flex items-center gap-2">
+        <div className=" mt-10 flex items-center gap-2">
           <Users className="w-6 h-6 text-gray-600" />
           <span className="font-semibold text-gray-900 hidden lg:block">
             Conversations

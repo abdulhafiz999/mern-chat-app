@@ -30,7 +30,7 @@ const App = () => {
         />
         <Route
           path="/signup"
-          element={authUser ? <Navigate to="/" /> : <SignUpPage />}
+          element={authUser ? <Navigate to="/login" /> : <SignUpPage />}
         />
         <Route
           path="/profile"

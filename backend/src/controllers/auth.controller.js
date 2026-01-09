@@ -67,14 +67,14 @@ export const signIn = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // 1️⃣ Validate input
+    //  Validate input
     if (!email || !password) {
       return res.status(400).json({
         message: "Please provide email and password",
       });
     }
 
-    // 2️⃣ Find user by email
+    // Find user by email
     const user = await userModel.findOne({ email });
 
     if (!user) {
@@ -83,7 +83,7 @@ export const signIn = async (req, res) => {
       });
     }
 
-    // 3️⃣ Compare password
+    //  Compare password
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
     if (!isPasswordCorrect) {
@@ -92,14 +92,14 @@ export const signIn = async (req, res) => {
       });
     }
 
-    // 4️⃣ Set user online status to true
+    //  Set user online status to true
     user.isOnline = true;
     await user.save();
 
-    // 5️⃣ Generate token
+    //  Generate token
     const token = generateJWT(user._id, res);
 
-    // 6️⃣ Send response
+    //  Send response
     res.status(200).json({
       message: "Login successful",
       token,
